@@ -329,3 +329,241 @@ function debounce(func, wait) {
 window.addEventListener('resize', debounce(function() {
     // Handle responsive behaviors
 }, 250));
+
+
+
+ * Main JavaScript for Portfolio Website
+ * Includes widget functionality and interactive elements
+ */
+
+// Import theme manager
+import './theme.js';
+
+// Widget API functions
+const WidgetManager = {
+    async fetchWeatherData() {
+        try {
+            const response = await fetch('/api/weather/');
+            const data = await response.json();
+            this.updateWeatherWidget(data);
+        } catch (error) {
+            console.error('Weather fetch failed:', error);
+            this.showWeatherError();
+        }
+    },
+    
+    updateWeatherWidget(data) {
+        const widget = document.getElementById('weather-data');
+        if (widget && data.success) {
+            widget.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold">${data.data.temperature}°C</div>
+                        <div class="text-sm text-light">${data.data.city}, ${data.data.country}</div>
+                    </div>
+                    <img src="${data.data.icon_url}" alt="${data.data.description}" class="w-12 h-12">
+                </div>
+                <div class="mt-2 text-sm">
+                    <div>Feels like: ${data.data.feels_like}°C</div>
+                    <div>Humidity: ${data.data.humidity}%</div>
+                    <div>Wind: ${data.data.wind_speed} m/s</div>
+                </div>
+            `;
+            widget.classList.remove('loading');
+        }
+    },
+    
+    showWeatherError() {
+        const widget = document.getElementById('weather-data');
+        if (widget) {
+            widget.innerHTML = '<div class="text-center text-light">Weather data unavailable</div>';
+            widget.classList.remove('loading');
+        }
+    },
+    
+    async fetchQuoteData() {
+        try {
+            const response = await fetch('/api/quote/');
+            const data = await response.json();
+            this.updateQuoteWidget(data);
+        } catch (error) {
+            console.error('Quote fetch failed:', error);
+            this.showQuoteError();
+        }
+    },
+    
+    updateQuoteWidget(data) {
+        const widget = document.getElementById('quote-data');
+        if (widget && data.success) {
+            widget.innerHTML = `
+                <div class="italic text-lg">"${data.data.quote}"</div>
+                <div class="mt-2 text-right text-sm text-light">— ${data.data.author}</div>
+            `;
+            widget.classList.remove('loading');
+        }
+    },
+    
+    showQuoteError() {
+        const widget = document.getElementById('quote-data');
+        if (widget) {
+            widget.innerHTML = '<div class="text-center text-light">Quote unavailable</div>';
+            widget.classList.remove('loading');
+        }
+    },
+    
+    async fetchGitHubData(username) {
+        try {
+            const response = await fetch(`/api/github/?username=${username}`);
+            const data = await response.json();
+            this.updateGitHubWidget(data);
+        } catch (error) {
+            console.error('GitHub fetch failed:', error);
+            this.showGitHubError();
+        }
+    },
+    
+    updateGitHubWidget(data) {
+        const widget = document.getElementById('github-data');
+        if (widget && data.success) {
+            widget.innerHTML = `
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">${data.data.user.public_repos}</div>
+                        <div class="text-xs text-light">Repositories</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">${data.data.user.followers}</div>
+                        <div class="text-xs text-light">Followers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">${data.data.user.following}</div>
+                        <div class="text-xs text-light">Following</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">${data.data.user.public_gists}</div>
+                        <div class="text-xs text-light">Gists</div>
+                    </div>
+                </div>
+            `;
+            widget.classList.remove('loading');
+        }
+    },
+    
+    showGitHubError() {
+        const widget = document.getElementById('github-data');
+        if (widget) {
+            widget.innerHTML = '<div class="text-center text-light">GitHub data unavailable</div>';
+            widget.classList.remove('loading');
+        }
+    }
+};
+
+// Smooth scrolling for anchor links
+function initSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href !== '#' && href !== '') {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    });
+}
+
+// Intersection Observer for animations
+function initAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Observe elements with animation classes
+    document.querySelectorAll('.fade-in-up, .slide-in-left, .scale-in').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+// Mobile menu toggle
+function initMobileMenu() {
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuToggle.setAttribute('aria-expanded', 
+                mobileMenu.classList.contains('hidden') ? 'false' : 'true'
+            );
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize components
+    initSmoothScrolling();
+    initAnimations();
+    initMobileMenu();
+    
+    // Expose widget functions to global scope for template usage
+    window.fetchWeatherData = () => WidgetManager.fetchWeatherData();
+    window.fetchQuoteData = () => WidgetManager.fetchQuoteData();
+    window.fetchGitHubData = (username) => WidgetManager.fetchGitHubData(username);
+    
+    // Auto-initialize widgets based on data attributes
+    document.querySelectorAll('[data-widget]').forEach(widget => {
+        const type = widget.dataset.widget;
+        switch(type) {
+            case 'weather':
+                WidgetManager.fetchWeatherData();
+                break;
+            case 'quote':
+                WidgetManager.fetchQuoteData();
+                break;
+            case 'github':
+                const username = widget.dataset.username;
+                if (username) WidgetManager.fetchGitHubData(username);
+                break;
+        }
+    });
+    
+    // Update current year in footer
+    const yearElement = document.getElementById('current-year');
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
+    }
+});
+
+// Error handling
+window.addEventListener('error', (e) => {
+    console.error('Script error:', e.error);
+});
+
+// Export for module usage
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { WidgetManager };
+}

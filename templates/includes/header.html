@@ -1,0 +1,24 @@
+<!-- includes/header.html -->
+<header class="header py-4">
+    <div class="flex items-center justify-between">
+        <a href="/" class="logo text-2xl">
+            <i class="fas fa-code text-accent mr-2"></i>
+            {{ portfolio.title|default:"Portfolio" }}
+        </a>
+
+        <!-- Main Navigation (Desktop) -->
+        <div class="hidden md:flex items-center gap-6">
+            {% include 'includes/navigation.html' with aria_label="Primary navigation" %}
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- Mobile menu button -->
+        <button class="mobile-menu-toggle md:hidden" aria-label="Toggle menu" aria-expanded="false">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
+    </div>
+</header>
