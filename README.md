@@ -439,9 +439,9 @@ python manage.py check --deploy
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/Django-portfolio-apps/issues)
-- **Email**: your-email@example.com
-- **Documentation**: [Read the Docs](https://your-docs-site.com)
+- **Issues**: [GitHub Issues](https://github.com/kingfestus/Django-portfolio-apps)
+- **Email**: jubileefestus@gmail.com.com
+
 
 ---
 
