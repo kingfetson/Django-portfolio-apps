@@ -1,0 +1,119 @@
+{% load static %}
+
+
+<link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+<style>
+    .destination-detail-header {
+        margin-bottom: 40px;
+    }
+    
+    .destination-banner {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    
+    .destination-meta {
+        display: flex;
+        gap: 30px;
+        margin: 20px 0;
+        color: #666;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .destination-description-full {
+        line-height: 1.8;
+        margin-bottom: 40px;
+        font-size: 1.1em;
+    }
+    
+    .trips-section {
+        margin-top: 60px;
+    }
+    
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #3498db;
+        text-decoration: none;
+    }
+    
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<a href="{% url 'travel:destinations' %}" class="back-link">
+    <i class="fas fa-arrow-left"></i> Back to Destinations
+</a>
+
+<div class="destination-detail-header">
+    <h1 class="section-title">{{ destination.name }}, {{ destination.country }}</h1>
+    <div class="destination-meta">
+        <div class="meta-item">
+            <i class="fas fa-globe-americas"></i>
+            <span>{{ destination.get_continent_display }}</span>
+        </div>
+        <div class="meta-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Best time: {{ destination.best_time_to_visit|default:"Year-round" }}</span>
+        </div>
+        <div class="meta-item">
+            <i class="fas fa-dollar-sign"></i>
+            <span>Est. cost: ${{ destination.estimated_cost }} per person</span>
+        </div>
+    </div>
+</div>
+
+{% if destination.featured_image %}
+<img src="{{ destination.featured_image.url }}" alt="{{ destination.name }}" class="destination-banner">
+{% endif %}
+
+<div class="destination-description-full">
+    {{ destination.description|linebreaks }}
+</div>
+
+{% if trips %}
+<div class="trips-section">
+    <h2 class="section-title">Available Trips</h2>
+    <div class="trips-grid">
+        {% for trip in trips %}
+        <div class="trip-card">
+            <div class="trip-content">
+                <div class="trip-header">
+                    <h3 style="margin: 0;">{{ trip.title }}</h3>
+                    <span class="trip-type">{{ trip.get_trip_type_display }}</span>
+                </div>
+                <div class="trip-details">
+                    <p><i class="fas fa-calendar-alt"></i> {{ trip.duration_days }} days</p>
+                    <p><i class="fas fa-dollar-sign"></i> ${{ trip.price }}</p>
+                    {% if trip.start_date %}
+                    <p><i class="fas fa-clock"></i> {{ trip.start_date|date:"M d, Y" }}</p>
+                    {% endif %}
+                </div>
+                <p style="color: #666; margin-bottom: 15px;">{{ trip.description|truncatechars:120 }}</p>
+                <a href="{% url 'travel:trip_detail' trip.slug %}" class="btn-explore">View Trip Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<div style="margin-top: 40px; padding: 20px; background: #ecf0f1; border-radius: 10px;">
+    <h3>Add to Your Travel Plans</h3>
+    <div style="margin-top: 15px;">
+        <button class="wishlist-btn" data-destination-id="{{ destination.id }}" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+            <i class="far fa-heart"></i> Add to Wishlist
+        </button>
+    </div>
+</div>
+{% endif %}

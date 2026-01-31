@@ -1,0 +1,94 @@
+{% load static %}
+
+
+<link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+<style>
+    .destinations-header {
+        margin-bottom: 40px;
+    }
+    
+    .continent-filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+    }
+    
+    .continent-btn {
+        padding: 8px 16px;
+        background: #ecf0f1;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .continent-btn:hover {
+        background: #bdc3c7;
+    }
+    
+    .continent-btn.active {
+        background: #3498db;
+        color: white;
+    }
+    
+    .no-destinations {
+        text-align: center;
+        padding: 50px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        color: #666;
+    }
+</style>
+
+<div class="destinations-header">
+    <h1 class="section-title">Explore Destinations</h1>
+    <p>Discover amazing places around the world to visit on your next adventure.</p>
+    
+    <div class="continent-filters">
+        <a href="{% url 'travel:destinations' %}" class="continent-btn {% if not selected_continent %}active{% endif %}">All</a>
+        {% for continent_code, continent_name in continents %}
+        <a href="{% url 'travel:destinations' %}?continent={{ continent_code }}" 
+           class="continent-btn {% if selected_continent == continent_code %}active{% endif %}">
+            {{ continent_name }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% if destinations %}
+<div class="destinations-grid">
+    {% for destination in destinations %}
+    <div class="destination-card">
+        {% if destination.featured_image %}
+        <img src="{{ destination.featured_image.url }}" alt="{{ destination.name }}" class="destination-image">
+        {% else %}
+        <div style="width: 100%; height: 200px; background: #bdc3c7; display: flex; align-items: center; justify-content: center; color: white; font-size: 2em;">
+            <i class="fas fa-globe-americas"></i>
+        </div>
+        {% endif %}
+        <div class="destination-info">
+            <h3 class="destination-name">{{ destination.name }}</h3>
+            <p class="destination-country">{{ destination.country }} • {{ destination.get_continent_display }}</p>
+            <p class="destination-description">{{ destination.description|truncatechars:120 }}</p>
+            <div style="margin-top: 15px;">
+                <a href="{% url 'travel:destination_detail' destination.slug %}" class="btn-explore">View Details</a>
+                {% if user.is_authenticated %}
+                <button class="wishlist-btn" data-destination-id="{{ destination.id }}" style="margin-left: 10px; padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="far fa-heart"></i> Wishlist
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-destinations">
+    <h3>No destinations found</h3>
+    <p>Check back soon or add destinations through the admin panel.</p>
+    {% if user.is_authenticated %}
+    <a href="/admin/travel/destination/add/" class="btn-explore" style="margin-top: 20px;">Add Destination</a>
+    {% endif %}
+</div>
+{% endif %}

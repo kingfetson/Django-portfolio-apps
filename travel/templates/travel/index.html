@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Adventures - Explore the World</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/mobile-menu.css' %}">
+    <style>
+        /* Travel app specific styles */
+        .travel-hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.9));
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .travel-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .travel-hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        
+        .featured-section {
+            margin: 60px 0;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .destinations-grid, .trips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .destination-card, .trip-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .destination-card:hover, .trip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .destination-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .destination-info, .trip-content {
+            padding: 20px;
+        }
+        
+        .destination-name {
+            font-size: 1.3rem;
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .destination-country {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .btn-explore {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .btn-explore:hover {
+            background: #2980b9;
+        }
+        
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .trip-type {
+            background: #2ecc71;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .trip-details {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            margin: 60px 0;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .cta-button {
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .cta-button.secondary {
+            background: #2ecc71;
+        }
+        
+        .cta-button:hover {
+            background: #2980b9;
+        }
+        
+        .cta-button.secondary:hover {
+            background: #27ae60;
+        }
+        
+        @media (max-width: 768px) {
+            .travel-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .destinations-grid, .trips-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">
+                Portfolio
+            </a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/projects/">Projects</a>
+                <a href="/skills/">Skills</a>
+                <a href="/dishes/">Dishes</a>
+                <a href="/travel/" class="active">Travel</a>
+                {% if user.is_authenticated %}
+                <a href="/admin/">Admin</a>
+                {% endif %}
+            </nav>
+        </header>
+        
+        <main>
+            <section class="travel-hero">
+                <h1>Explore Beautiful Destinations</h1>
+                <p>Discover amazing places, plan your next adventure, and get expert travel tips from around the world.</p>
+                <a href="/travel/destinations/" class="btn-explore">Browse Destinations</a>
+            </section>
+            
+            {% if featured_destinations %}
+            <section class="featured-section">
+                <h2 class="section-title">Featured Destinations</h2>
+                <div class="destinations-grid">
+                    {% for destination in featured_destinations %}
+                    <div class="destination-card">
+                        {% if destination.featured_image %}
+                        <img src="{{ destination.featured_image.url }}" alt="{{ destination.name }}" class="destination-image">
+                        {% else %}
+                        <div style="width: 100%; height: 200px; background: #bdc3c7; display: flex; align-items: center; justify-content: center; color: white; font-size: 2em;">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        {% endif %}
+                        <div class="destination-info">
+                            <h3 class="destination-name">{{ destination.name }}</h3>
+                            <p class="destination-country">{{ destination.country }} • {{ destination.get_continent_display }}</p>
+                            <p style="color: #666; margin-bottom: 15px;">{{ destination.description|truncatechars:120 }}</p>
+                            <a href="/travel/destinations/{{ destination.slug }}/" class="btn-explore">Explore</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+            
+            {% if featured_trips %}
+            <section class="featured-section">
+                <h2 class="section-title">Featured Trips</h2>
+                <div class="trips-grid">
+                    {% for trip in featured_trips %}
+                    <div class="trip-card">
+                        <div class="trip-content">
+                            <div class="trip-header">
+                                <h3 style="margin: 0;">{{ trip.title }}</h3>
+                                <span class="trip-type">{{ trip.get_trip_type_display }}</span>
+                            </div>
+                            <div class="trip-details">
+                                <p><i class="fas fa-map-marker-alt"></i> {{ trip.destination.name }}</p>
+                                <p><i class="fas fa-calendar-alt"></i> {{ trip.duration_days }} days</p>
+                                <p><i class="fas fa-dollar-sign"></i> ${{ trip.price }}</p>
+                            </div>
+                            <p style="color: #666; margin-bottom: 15px;">{{ trip.description|truncatechars:120 }}</p>
+                            <a href="/travel/trips/{{ trip.slug }}/" class="btn-explore">View Details</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+            
+            <section class="cta-section">
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ready for Your Next Adventure?</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Browse our destinations or get expert travel tips to plan your perfect trip
+                </p>
+                <div class="cta-buttons">
+                    <a href="/travel/destinations/" class="cta-button">View All Destinations</a>
+                    <a href="/travel/tips/" class="cta-button secondary">Travel Tips</a>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Portfolio &copy; {% now "Y" %}</p>
+            <p class="footer-note">
+                Built with Django • Hosted with ❤️
+            </p>
+        </footer>
+    </div>
+    
+    <script src="{% static 'landing/js/main.js' %}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Travel page loaded');
+        
+        // Add hover effects
+        const cards = document.querySelectorAll('.destination-card, .trip-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    });
+    </script>
+</body>
+</html>

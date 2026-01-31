@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+</head>
+<body>
+    <nav class="travel-nav">
+        <div class="container">
+            <a href="{% url 'travel:home' %}" class="logo">
+                <i class="fas fa-globe-americas"></i> Travel Adventures
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'travel:home' %}">Home</a>
+                <a href="{% url 'travel:destinations' %}">Destinations</a>
+                <a href="{% url 'travel:trips' %}">Trips</a>
+                <a href="{% url 'travel:tips' %}">Travel Tips</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'travel:wishlist' %}">My Wishlist</a>
+                {% endif %}
+                <a href="/">← Back to Portfolio</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+    </main>
+    
+    <footer class="travel-footer">
+        <div class="container">
+            <p>&copy; {% now "Y" %} Travel Adventures. Explore the world responsibly.</p>
+            <p class="footer-links">
+                <a href="/">Portfolio Home</a> | 
+                <a href="/admin/">Admin</a>
+            </p>
+        </div>
+    </footer>
+    
+    <script src="{% static 'landing/js/main.js' %}"></script>
+</body>
+</html>

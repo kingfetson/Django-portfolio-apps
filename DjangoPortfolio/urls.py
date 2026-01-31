@@ -23,12 +23,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('landing.urls')),  # Home page
     path('portfolio/', include('portfolio.urls')),
-    path('projects/', include('projects.urls')),  # ADD THIS LINE
-    path('skills/', include('skills.urls')),      # ADD THIS LINE
+    path('projects/', include('projects.urls')),  
+    path('skills/', include('skills.urls')),      
     path('menu/', include('menu.urls')),
     path('dishes/', include('dishes.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include('api_integrations.urls')),
+    path('travel/', include('travel.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
