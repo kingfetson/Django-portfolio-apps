@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Menu</title>
+</head>
+<body>
+    <h1>Our Menu</h1>
+
+    {% for dish in dishes %}
+        <div>
+            <h3>{{ dish.name }} - ${{ dish.price }}</h3>
+            <p>{{ dish.description }}</p>
+            <small>Category: {{ dish.category }}</small>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No dishes available.</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!-- landing/templates/landing/partials/header.html -->
+<header>
+    <a href="/" class="logo">
+        {{ portfolio.title|default:"Portfolio" }}
+    </a>
+    
+    <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <nav>
+        {% if header_menu %}
+            {% for item in header_menu %}
+                <a href="{{ item.url }}" {% if item.open_in_new_tab %}target="_blank"{% endif %}>
+                    {{ item.title }}
+                </a>
+            {% endfor %}
+        {% else %}
+            <a href="/">Home</a>
+            <a href="/projects/">Projects</a>
+            <a href="/skills/">Skills</a>
+            <a href="/dishes/">Dishes</a>
+            <a href="/admin/">Admin</a>
+        {% endif %}
+    </nav>
+    
+    <div class="menu-overlay" id="menu-overlay"></div>
+</header>

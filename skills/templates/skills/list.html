@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Skills</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .categories-container {
+            margin-top: 40px;
+        }
+        
+        .category-section {
+            margin-bottom: 60px;
+        }
+        
+        .category-title {
+            color: #667eea;
+            font-size: 1.8em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .skill-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .skill-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .progress-container {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: #4CAF50;
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .skill-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .no-skills {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .admin-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Skills</h1>
+            <a href="/" class="back-link">← Back to Home</a>
+        </header>
+        
+        <main>
+            {% if categories_with_skills %}
+                <div class="categories-container">
+                    {% for category, skills in categories_with_skills %}
+                    <div class="category-section">
+                        <h2 class="category-title">{{ category.name }}</h2>
+                        <div class="skills-grid">
+                            {% for skill in skills %}
+                            <div class="skill-item">
+                                <div class="skill-name">{{ skill.name }}</div>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: {{ skill.proficiency }}%"></div>
+                                </div>
+                                <div class="skill-details">
+                                    <span>{{ skill.proficiency }}% proficiency</span>
+                                    <span>{{ skill.years_of_experience|floatformat:1 }} years</span>
+                                </div>
+                                {% if skill.short_description %}
+                                <p style="margin-top: 10px; font-size: 0.95em; color: #555;">
+                                    {{ skill.short_description }}
+                                </p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-skills">
+                    <p>No skills defined yet. Add some skills in the admin panel.</p>
+                    <a href="/admin/" class="admin-link">Go to Admin Panel</a>
+                </div>
+            {% endif %}
+        </main>
+        
+        <footer>
+            <p>© 2024 My Portfolio • Skills Overview</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Animate progress bars when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBar = entry.target.querySelector('.progress-bar');
+                        if (progressBar) {
+                            const width = progressBar.style.width;
+                            progressBar.style.width = '0%';
+                            setTimeout(() => {
+                                progressBar.style.transition = 'width 1s ease-in-out';
+                                progressBar.style.width = width;
+                            }, 100);
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            document.querySelectorAll('.skill-item').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>

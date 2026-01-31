@@ -1,0 +1,25 @@
+<!-- landing/templates/landing/partials/skills.html -->
+{% if featured_skills %}
+<section class="skills-section">
+    <h2 class="section-title">My Skills</h2>
+    <div class="skills-grid">
+        {% for skill in featured_skills %}
+        <div class="skill-card">
+            <h3>{{ skill.name }}</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ skill.proficiency }}%"></div>
+            </div>
+            <div class="skill-meta">
+                <span>{{ skill.proficiency }}% proficiency</span>
+                <span>{{ skill.years_of_experience|floatformat:1 }} years</span>
+            </div>
+            {% if skill.short_description %}
+            <p class="skill-description">
+                {{ skill.short_description }}
+            </p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}

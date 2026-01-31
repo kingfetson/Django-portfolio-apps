@@ -1,0 +1,38 @@
+<!-- landing/templates/landing/partials/projects.html -->
+{% if featured_projects %}
+<section class="projects-section">
+    <h2 class="section-title">Featured Projects</h2>
+    <div class="projects-grid">
+        {% for project in featured_projects %}
+        <div class="project-card">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.tagline }}</p>
+            
+            {% if project.technologies.all %}
+            <div class="project-tags">
+                {% for tech in project.technologies.all|slice:":3" %}
+                <span class="tag">{{ tech.name }}</span>
+                {% endfor %}
+                {% if project.technologies.count > 3 %}
+                <span class="tag">+{{ project.technologies.count|add:"-3" }} more</span>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="project-links">
+                {% if project.github_url %}
+                <a href="{{ project.github_url }}" target="_blank" rel="noopener">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                {% endif %}
+                {% if project.live_url %}
+                <a href="{{ project.live_url }}" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i> Live Demo
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}

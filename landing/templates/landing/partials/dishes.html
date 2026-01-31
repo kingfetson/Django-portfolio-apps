@@ -1,0 +1,62 @@
+<!-- landing/templates/landing/partials/dishes.html -->
+{% if featured_dishes %}
+<section class="dishes-section">
+    <h2 class="section-title">🍽 Featured Creations</h2>
+    <p class="text-center mb-40" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+        A taste of my culinary portfolio - each dish tells a story of flavor and craftsmanship
+    </p>
+    
+    <div class="dishes-grid">
+        {% for dish in featured_dishes %}
+        <div class="dish-card">
+            <div class="dish-image">
+                {% if dish.image %}
+                <img src="{{ dish.image.url }}" alt="{{ dish.name }}" loading="lazy">
+                {% else %}
+                <div class="dish-placeholder">
+                    🍽
+                </div>
+                {% endif %}
+            </div>
+            <div class="dish-content">
+                <div class="dish-header">
+                    <h3 class="dish-name">{{ dish.name }}</h3>
+                    <span class="dish-price">${{ dish.price }}</span>
+                </div>
+                
+                <div class="dish-tags">
+                    <span class="dish-category-tag">{{ dish.get_category_display }}</span>
+                    {% if dish.is_vegetarian %}
+                    <span class="dish-vegetarian-tag">🌱 Vegetarian</span>
+                    {% endif %}
+                    {% if dish.is_spicy %}
+                    <span class="dish-spicy-tag">🌶 Spicy</span>
+                    {% endif %}
+                </div>
+                
+                <p class="dish-description">
+                    {{ dish.description|truncatechars:120 }}
+                </p>
+                
+                {% if dish.prep_time %}
+                <div class="dish-meta">
+                    ⏱ Prep: {{ dish.prep_time }} mins
+                    {% if dish.calories %}
+                    • 🔥 {{ dish.calories }} cal
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if featured_dishes|length >= 4 %}
+    <div class="text-center mt-40">
+        <a href="/dishes/" class="view-menu-button">
+            View Full Menu →
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endif %}

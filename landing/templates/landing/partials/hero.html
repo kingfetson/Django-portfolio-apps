@@ -1,0 +1,8 @@
+<!-- landing/templates/landing/partials/hero.html -->
+<section class="hero">
+    <h1>{{ portfolio.title|default:"Welcome" }}</h1>
+    <p>{{ portfolio.tagline|default:"Building amazing things with code" }}</p>
+    {% if portfolio %}
+        <a href="#contact" class="cta-button">Get In Touch</a>
+    {% endif %}
+</section>

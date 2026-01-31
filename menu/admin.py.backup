@@ -1,0 +1,5 @@
+from django.contrib import admin
+from dishes.models import Dish
+
+
+@admin.register(Dish)

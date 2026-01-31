@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug - Image Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug-info { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .image-test { margin: 20px 0; }
+        img { max-width: 300px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Image Debug Page</h1>
+    
+    <div class="debug-info">
+        <h3>Dishes in Database:</h3>
+        {% for dish in featured_dishes %}
+        <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd;">
+            <strong>{{ dish.name }}</strong><br>
+            Image field: {{ dish.image }}<br>
+            Image URL: {{ dish.image.url }}<br>
+            Image name: {{ dish.image.name }}<br>
+            
+            <div class="image-test">
+                <h4>Test Image:</h4>
+                {% if dish.image %}
+                <p>Direct tag: &lt;img src="{{ dish.image.url }}"&gt;</p>
+                <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
+                {% else %}
+                <p>No image</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="debug-info">
+        <h3>Direct Image Links:</h3>
+        {% for dish in featured_dishes %}
+        {% if dish.image %}
+        <p>
+            <a href="/media/{{ dish.image.name }}" target="_blank">
+                {{ dish.name }}: /media/{{ dish.image.name }}
+            </a>
+        </p>
+        {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>

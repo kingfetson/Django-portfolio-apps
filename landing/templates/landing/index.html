@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ portfolio.title|default:"My Portfolio" }}{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'landing/css/mobile-menu.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">
+                {{ portfolio.title|default:"Portfolio" }}
+            </a>
+            <nav>
+                {% if header_menu %}
+                    {% for item in header_menu %}
+                        <a href="{{ item.url }}" {% if item.open_in_new_tab %}target="_blank"{% endif %}>
+                            {{ item.title }}
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <a href="/">Home</a>
+                    <a href="/projects/">Projects</a>
+                    <a href="/skills/">Skills</a>
+                    <a href="/dishes/">Dishes</a>
+                    <a href="/admin/">Admin</a>
+                {% endif %}
+            </nav>
+        </header>
+        
+        <main>
+            {% block content %}
+            <section class="hero">
+                <h1>{{ portfolio.title|default:"Welcome" }}</h1>
+                <p>{{ portfolio.tagline|default:"Building amazing things with code" }}</p>
+                {% if portfolio %}
+                    <a href="#contact" class="cta-button">Get In Touch</a>
+                {% endif %}
+            </section>
+            
+            {% if portfolio and portfolio.bio %}
+            <section>
+                <h2 class="section-title">About Me</h2>
+                <div class="about-content">
+                    {{ portfolio.bio|linebreaks }}
+                </div>
+            </section>
+            {% endif %}
+            
+            {% if featured_projects %}
+            <section>
+                <h2 class="section-title">Featured Projects</h2>
+                <div class="projects-grid">
+                    {% for project in featured_projects %}
+                    <div class="project-card">
+                        <h3>{{ project.title }}</h3>
+                        <p>{{ project.tagline }}</p>
+                        
+                        {% if project.technologies.all %}
+                        <div class="project-tags">
+                            {% for tech in project.technologies.all|slice:":3" %}
+                            <span class="tag">{{ tech.name }}</span>
+                            {% endfor %}
+                            {% if project.technologies.count > 3 %}
+                            <span class="tag">+{{ project.technologies.count|add:"-3" }} more</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="project-links">
+                            {% if project.github_url %}
+                            <a href="{{ project.github_url }}" target="_blank">
+                                GitHub
+                            </a>
+                            {% endif %}
+                            {% if project.live_url %}
+                            <a href="{{ project.live_url }}" target="_blank">
+                                Live Demo
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+            
+            {% if featured_skills %}
+            <section>
+                <h2 class="section-title">My Skills</h2>
+                <div class="skills-grid">
+                    {% for skill in featured_skills %}
+                    <div class="skill-card">
+                        <h3>{{ skill.name }}</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ skill.proficiency }}%"></div>
+                        </div>
+                        <div class="skill-meta">
+                            <span>{{ skill.proficiency }}% proficiency</span>
+                            <span>{{ skill.years_of_experience|floatformat:1 }} years</span>
+                        </div>
+                        {% if skill.short_description %}
+                        <p class="skill-description">
+                            {{ skill.short_description }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+            
+            <!-- API Widgets Section -->
+            <div class="api-widgets-container">
+                {% if enable_weather_widget %}
+                <section class="api-widget weather-widget">
+                    <h3><i class="fas fa-cloud-sun"></i> Current Weather</h3>
+                    <div id="weather-data" class="loading">
+                        Loading weather...
+                    </div>
+                </section>
+                {% endif %}
+                
+                {% if enable_quote_widget %}
+                <section class="api-widget quote-widget">
+                    <h3><i class="fas fa-quote-left"></i> Quote of the Day</h3>
+                    <div id="quote-data" class="loading">
+                        Loading quote...
+                    </div>
+                </section>
+                {% endif %}
+                
+                {% if portfolio and portfolio.github_username and enable_github_widget %}
+                <section class="api-widget github-widget">
+                    <h3><i class="fab fa-github"></i> GitHub Stats</h3>
+                    <div id="github-data" class="loading">
+                        Loading GitHub stats...
+                    </div>
+                </section>
+                {% endif %}
+            </div>
+            
+            <!-- Featured Dishes Section -->
+            {% if featured_dishes %}
+            <section class="featured-dishes">
+                <h2 class="section-title">🍽 Featured Creations</h2>
+                <p class="section-subtitle">
+                    A taste of my culinary portfolio - each dish tells a story of flavor and craftsmanship
+                </p>
+                
+                <div class="dishes-grid">
+                    {% for dish in featured_dishes %}
+                    <div class="dish-card">
+                        <div class="dish-image">
+                            {% if dish.image %}
+                            <img src="{{ dish.image.url }}" alt="{{ dish.name }}">
+                            {% else %}
+                            <div class="dish-placeholder">
+                                🍽
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="dish-content">
+                            <div class="dish-header">
+                                <h3 class="dish-name">{{ dish.name }}</h3>
+                                <span class="dish-price">${{ dish.price }}</span>
+                            </div>
+                            
+                            <div class="dish-tags">
+                                <span class="dish-category-tag">{{ dish.get_category_display }}</span>
+                                {% if dish.is_vegetarian %}
+                                <span class="dish-vegetarian-tag">🌱 Vegetarian</span>
+                                {% endif %}
+                                {% if dish.is_spicy %}
+                                <span class="dish-spicy-tag">🌶 Spicy</span>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="dish-description">
+                                {{ dish.description|truncatechars:120 }}
+                            </p>
+                            
+                            {% if dish.prep_time %}
+                            <div class="dish-meta">
+                                ⏱ Prep: {{ dish.prep_time }} mins
+                                {% if dish.calories %}
+                                • 🔥 {{ dish.calories }} cal
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if featured_dishes|length >= 4 %}
+                <div class="view-menu-container">
+                    <a href="/dishes/" class="view-menu-button">
+                        View Full Menu →
+                    </a>
+                </div>
+                {% endif %}
+            </section>
+            {% endif %}
+            
+            <section id="contact">
+                <h2 class="section-title">Get In Touch</h2>
+                <div class="contact-container">
+                    {% if portfolio %}
+                    <div class="contact-info">
+                        {% if portfolio.email %}
+                        <p><i class="fas fa-envelope"></i> {{ portfolio.email }}</p>
+                        {% endif %}
+                        {% if portfolio.phone %}
+                        <p><i class="fas fa-phone"></i> {{ portfolio.phone }}</p>
+                        {% endif %}
+                        {% if portfolio.location %}
+                        <p><i class="fas fa-map-marker-alt"></i> {{ portfolio.location }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="social-links">
+                        {% if portfolio.github %}
+                        <a href="{{ portfolio.github }}" target="_blank" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        {% endif %}
+                        {% if portfolio.linkedin %}
+                        <a href="{{ portfolio.linkedin }}" target="_blank" title="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        {% endif %}
+                        {% if portfolio.twitter %}
+                        <a href="{{ portfolio.twitter }}" target="_blank" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        {% endif %}
+                        {% if portfolio.instagram %}
+                        <a href="{{ portfolio.instagram }}" target="_blank" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <p>Contact information will appear here once you set up your portfolio in the admin panel.</p>
+                    <a href="/admin/" class="cta-button">Go to Admin</a>
+                    {% endif %}
+                </div>
+            </section>
+            {% endblock %}
+        </main>
+        
+        <footer>
+            <p>{{ portfolio.title|default:"Portfolio" }} &copy; {% now "Y" %}</p>
+            <p class="footer-note">
+                Built with Django • Hosted with ❤️
+            </p>
+        </footer>
+    </div>
+    
+    <script src="{% static 'landing/js/main.js' %}"></script>
+    {% block extra_js %}
+    <script>
+        // Initialize API widgets if enabled
+        {% if enable_weather_widget %}
+        fetchWeatherData();
+        {% endif %}
+        
+        {% if enable_quote_widget %}
+        fetchQuoteData();
+        {% endif %}
+        
+        {% if portfolio and portfolio.github_username and enable_github_widget %};
+        fetchGitHubData('{{ portfolio.github_username }}');
+        {% endif %}
+    </script>
+    {% endblock %}
+</body>
+</html>
